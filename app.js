@@ -11,22 +11,34 @@ const { items } = require("./fakeDb");
 const { NotFoundError, BadRequestError } = require("./expressError");
 
 
-/** Returns list of items. */
+/** Returns list of items as JSON like:
+ *  { items: [{ name, price}, ... ] }
+ */
 
 app.get("/items", function (req, res) {
+
   return res.json({ items });
 });
 
-/** Accepts JSON body, add item to list,
- *  Return JSON: {added: { name, price}, ... } */
+
+/** Accepts JSON body of new item details, add item to list.
+ *  Return JSON: { added: { name, price}, ... } */
 
 app.post("/items", function (req, res) {
+
+  if (!(req.body.name) || !(req.body.price)) {
+    throw new BadRequestError("Item must have a name and price.");
+  }
+
   let newItem = { name: req.body.name, price: req.body.price };
   items.push(newItem);
+
   return res.json({ added: newItem });
 });
 
+
 /** Given a name as URL param, find and return that item.
+ *  Return JSON: { name, price }
  *  Throw 404 Error if not found.
  */
 
@@ -41,6 +53,30 @@ app.get("/items/:name", function (req, res) {
   }
   throw new NotFoundError("Item does not exist.");
 });
+
+
+
+/** Given a name as URL param, update that item with new price.
+ *  Return JSON: { updated: { name, price} }
+ *  Throw 404 Error if not found.
+ */
+
+app.patch("/items/:name", function (req, res) {
+
+  for (let item of items) {
+
+    if (item.name === req.params.name) {
+
+      item.price = req.body.price;
+
+      return res.json({ updated: item });
+    }
+  }
+  throw new NotFoundError("Item does not exist.");
+});
+
+
+
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */
 app.use(function (req, res, next) {
