@@ -76,6 +76,20 @@ app.patch("/items/:name", function (req, res) {
 });
 
 
+/** Given a name as URL param, delete that item.
+ *  Return JSON: {message: "Deleted" }
+ *  Throw 404 Error if not found.
+ */
+ app.delete("/items/:name", function (req, res) {
+  const deleteIndex = items.findIndex(item => item.name === req.params.name);
+
+  if (deleteIndex !== -1) {
+    items.splice(deleteIndex,1);
+    return res.json({ message: "Deleted" });
+  }
+  throw new NotFoundError("Item does not exist.");
+});
+
 
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */
