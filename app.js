@@ -33,7 +33,7 @@ app.post("/items", function (req, res) {
   let newItem = { name: req.body.name, price: req.body.price };
   items.push(newItem);
 
-  return res.json({ added: newItem });
+  return res.status(201).json({ added: newItem });
 });
 
 
