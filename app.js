@@ -1,4 +1,4 @@
-
+"use strict";
 const express = require("express");
 const app = express();
 
@@ -30,7 +30,7 @@ app.post("/items", function (req, res) {
     throw new BadRequestError("Item must have a name and price.");
   }
 
-  let newItem = { name: req.body.name, price: req.body.price };
+  const newItem = { name: req.body.name, price: req.body.price };
   items.push(newItem);
 
   return res.status(201).json({ added: newItem });
@@ -43,7 +43,7 @@ app.post("/items", function (req, res) {
  */
 
 app.get("/items/:name", function (req, res) {
-
+  //TODO: find method
   for (let item of items) {
 
     if (item.name === req.params.name) {

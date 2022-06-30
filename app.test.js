@@ -1,19 +1,20 @@
+"use strict";
 const request = require("supertest");
 
 const app = require("./app");
 
-let { items } = require("./fakeDb");
+const { items } = require("./fakeDb");
 
 let chocolate = { name: "Chocolate", price: 2.5 };
+
 
 beforeEach(function () {
   items.push(chocolate);
 });
 
 afterEach(function () {
-  items = [];
+  items.length = 0;
 });
-
 
 
 describe("GET /items", function () {
@@ -23,7 +24,6 @@ describe("GET /items", function () {
     expect(resp.body).toEqual({ items: items });
     expect(resp.statusCode).toEqual(200);
   });
-
 });
 
 
@@ -34,6 +34,7 @@ describe("POST /items", function () {
       .send({
         name: "Pear", price: 3.5
       });
+    //TODO: check item is in db (items)
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       added: { name: "Pear", price: 3.5 }
@@ -54,3 +55,11 @@ describe("POST /items", function () {
 });
 
 
+describe("GET /items/:name", function () {
+  it("Gets a list of items", async function () {
+    const resp = await request(app).get(`/items/${item.name}`);
+
+    expect(resp.body).toEqual({ items: items });
+    expect(resp.statusCode).toEqual(200);
+  });
+});
